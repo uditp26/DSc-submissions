@@ -1,6 +1,7 @@
 ---
 title: "Assignment 1"
 author: "Udit Pant"
+date: 03/09/2019
 output:
   pdf_document: default
 ---
@@ -15,6 +16,13 @@ Climate change is the change in earth's climatic conditions that last for a very
 CO2 is known to be the most impactful among the identified greenhouse gases. CO2 is emitted both by natural processes and man-made processes. The rising concentrations of this gas is a major concern for the planet. Over the years, CO2 levels have varied in concentrations. However, recently the concentrations (in ppm) have skyrocketted. The plots below reflect the current state of CO2 concentrations in the air which is increasing at an alarming rate.  
 
 &nbsp;
+
+\begin{center}
+
+\large{CO2 Levels Through The Years}
+
+\end{center}
+ 
 ```{r, echo=FALSE, results='hide', fig.align="center"}
 
 # Data Source: NASA
@@ -22,7 +30,7 @@ CO2 is known to be the most impactful among the identified greenhouse gases. CO2
 co2_levels <- c(190, 260, 180, 240, 170, 260, 210, 255, 190, 250, 185, 290, 185, 300, 185, 280, 200, 260, 180, 290, 180, 310, 410)
 years <- c("800,000", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Present", "Present")
 
-bp1 <- barplot(co2_levels, main = "Carbon-dioxide levels through the years", xlab = "Years Before Today", ylab = "CO2 (in ppm)", names.arg = years, col = c("lightcyan", "red", "lightblue"),)
+bp1 <- barplot(co2_levels, xlab = "Years Before Today", ylab = "CO2 (in ppm)", names.arg = years, col = c("lightcyan", "red", "lightblue"),)
 
 print(bp1)
 
@@ -31,11 +39,17 @@ print(bp1)
 In the figure below, one can notice the sharp peak in the concentration levels which has gone beyond 400ppm. Due to this, the overall temperatures around the world have increased resulting in the melting of glaciers and ice caps. It further adds to the increased sea-water levels which further ressult in catastrophic tsunamis and floods.  
 
 &nbsp;
+
+\begin{center}
+
+\large{Increasing CO2 Levels}
+
+\end{center}
 ```{r, echo=FALSE, results='hide', fig.align="center"}
 
 # Data Source: NASA
 
-plt1 <- plot(co2_levels, type = "l", xlab = "Years (in 100s)", ylab = "CO2 (in ppm)", main = "Increasing CO2 levels", col  = rainbow(25))
+plt1 <- plot(co2_levels, type = "l", xlab = "Years (in 100s)", ylab = "CO2 (in ppm)", col  = rainbow(25))
 
 print(plt1)
 
@@ -50,6 +64,8 @@ Due to increased use of automobiles, industries and manufacturing plants, not on
 The heatmap below visualizes the change in CO2 emissions and Forest Area from 1995 to 2010. Data from all countries of the world have been used to plot the figure.  
 
 &nbsp;
+
+
 ```{r, echo=FALSE, results='hide', warning=FALSE, fig.align="center", message=FALSE}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -155,6 +171,12 @@ With more and more lands occupied for agriculture and felling of trees for energ
 Greenhouse gases such as CO2 are known to cause an increase in the temperature of the surroundings by trapping heat from the sun. An analysis on recorded data yields some unsettling facts. The data below represents mean temperature of Indian cities from all regions for the month of December (Winter) and June (Summer). On close observation, it can be noticed that on an average, mean temperature in winters are on a decline. Similarly, in summers, the mean temperature are on the rise. This hints at the possible shift of the climatic cycle which could disturb the living conditions in which we live. This has grave consequences such as bad crop yields, affect on animal habitat, etc.  
 
 &nbsp;
+
+\begin{center}
+
+\large{Mean Temperature in December}
+
+\end{center}
 ```{r, echo=FALSE, results='hide', fig.align="center"}
 mean_temp_dec08 = c(5.5, 17.2, 21.5, 20.5, 23.7, 21.7, 22.9, 23.3, 26.2, 27.4)
 mean_temp_dec18 = c(3.0, 14.8, 18.3, 19.3, 20.6, 20.3, 19.5, 22.7, 26.3, 28.2)
@@ -176,7 +198,7 @@ temperature2 <- c(23.9, 30.9, 32.5, 29.2, 32.5, 29.5, 30.5, 29.6, 32.4, 27.6, 21
 
 df2 <- data.frame(year, cities, temperature2)
 
-gplt1 <- ggplot(df1, aes(cities, temperature1, fill = year)) + ggtitle("Mean Temperature in December") +  geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Temperature")
+gplt1 <- ggplot(df1, aes(cities, temperature1, fill = year)) +  geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Temperature")
 
 print(gplt1)
 
@@ -185,8 +207,13 @@ print(gplt1)
 &nbsp;
 &nbsp;
 
+\begin{center}
+
+\large{Mean Temperature in June}
+
+\end{center}
 ```{r, echo=FALSE, results='hide', fig.align="center"}
-gplt2 <- ggplot(df2, aes(cities, temperature2, fill = year)) + ggtitle("Mean Temperature in June") + geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Temperature")
+gplt2 <- ggplot(df2, aes(cities, temperature2, fill = year)) + geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Temperature")
 
 print(gplt2)
 ```
@@ -197,6 +224,12 @@ print(gplt2)
 The plots below reveal that in just the last ten years rainfall patterns have changed drastically. During winters, coastal areas such as Chennai show a massive increase in rainfall. On the contrary, places like Srinagar are seeing a huge decline in the amount of rainfall received. During summers, in general there has been a decline in the amount of rainfall received.  
 
 &nbsp;
+
+\begin{center}
+
+\large{Rainfall in December (in mm)}
+
+\end{center}
 ```{r, echo=FALSE, results='hide', fig.align="center"}
 
 cities <- c('Srinagar', 'New Delhi', 'Jodhpur', 'Guwahati', 'Ahmedabad', 'Calcutta', 'Nagpur', 'Hyderabad', 'Chennai', 'Thiruvanthapuram', 'Srinagar', 'New Delhi', 'Jodhpur', 'Guwahati', 'Ahmedabad', 'Calcutta', 'Nagpur', 'Hyderabad', 'Chennai', 'Thiruvanthapuram')
@@ -219,7 +252,7 @@ df2 <- data.frame(year, cities, rainfall2)
 
 # par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
 
-gplt3 <- ggplot(df1, aes(cities, rainfall1, fill = year)) + ggtitle("Rainfall in December (in mm)") +  geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Rainfall (mm)")
+gplt3 <- ggplot(df1, aes(cities, rainfall1, fill = year)) +  geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Rainfall (mm)")
 
 print(gplt3)
 
@@ -227,8 +260,14 @@ print(gplt3)
 ***
 
 &nbsp;
+
+\begin{center}
+
+\large{Rainfall in June (in mm)}
+
+\end{center}
 ```{r, echo=FALSE, results='hide', fig.align="center"}
-gplt4 <- ggplot(df2, aes(cities, rainfall2, fill = year)) + ggtitle("Rainfall in June (in mm)") + geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Rainfall (mm)")
+gplt4 <- ggplot(df2, aes(cities, rainfall2, fill = year)) + geom_bar(stat="identity", position = "dodge") +  scale_fill_brewer(palette = "Set1") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Cities") + ylab("Rainfall (mm)")
 
 print(gplt4)
 ```
@@ -244,6 +283,12 @@ One of the examples of extreme weather conditions caused due to climate imbalanc
 
 &nbsp;
 
+\begin{center}
+
+\large{Droughts across the world}
+
+\end{center}
+
 ```{r, echo=FALSE, results='hide', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/number-of-natural-disaster-events.csv'
   disasters <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -252,7 +297,7 @@ One of the examples of extreme weather conditions caused due to climate imbalanc
   
   flood <- disasters[disasters$Entity %in% c("Flood"),]
   
-  bplt2 <- barplot(drought$Number.of.reported.natural.disasters..reported.disasters., names.arg = drought$Year, xlab = "Year", ylab = "# of Droughts", main = "Droughts across the world", col = c("lightcyan", "red", "lightblue"),)
+  bplt2 <- barplot(drought$Number.of.reported.natural.disasters..reported.disasters., names.arg = drought$Year, xlab = "Year", ylab = "# of Droughts", col = c("lightcyan", "red", "lightblue"),)
   
   print(bplt2)
 
@@ -267,8 +312,14 @@ The other terrible situations to arise from bad climatic conditions is that of f
 
 &nbsp;
 
+\begin{center}
+
+\large{Floods across the world}
+
+\end{center}
+
 ```{r, echo=FALSE, results='hide', fig.align="center"}
-bplt3 <- barplot(flood$Number.of.reported.natural.disasters..reported.disasters., names.arg = flood$Year, xlab = "Year", ylab = "# of Floods", main = "Floods across the world", col = c("lightcyan", "red", "lightblue"),)
+bplt3 <- barplot(flood$Number.of.reported.natural.disasters..reported.disasters., names.arg = flood$Year, xlab = "Year", ylab = "# of Floods", col = c("lightcyan", "red", "lightblue"),)
 
 print(bplt3)
 
@@ -279,6 +330,12 @@ print(bplt3)
 Successively, through the years, terrestrial and marine cover has decreased. As it can be observed below, the areas have become more scattered and less voluminous.  
 
 &nbsp;
+
+\begin{center}
+
+\large{Terrestrial and Marine Cover}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -302,6 +359,12 @@ Successively, through the years, terrestrial and marine cover has decreased. As 
 On observing acrgricultural patterns in a decadal fashion, the growing trend of agriculture can be observed which sounds promising but isn't. Lands for agriculture are acquired often through deforestation. Often the agricultural practices are not sustainaible and cause damage to the environment.  
 
 &nbsp;
+
+\begin{center}
+
+\large{Agricultural Land Cover}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
 abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -325,6 +388,11 @@ abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate
 As a result of urbanization and industrialization, the total forest cover across the globe has significantly reduced. This affects the gas levels in the atmosphere and also results in animals losing their habitat; some of them edging towards extinction.  
 
 &nbsp;
+\begin{center}
+
+\large{Forest Cover}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -345,6 +413,11 @@ As a result of urbanization and industrialization, the total forest cover across
 CO2 emissions are on the rise throughout the world. This has resulted in increase in the average global temperature of the planet causing melting os galciers, rise in sea level and disturbances in air currents.  
 
 &nbsp;
+\begin{center}
+
+\large{CO2 Emissions}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -366,6 +439,11 @@ CO2 emissions are on the rise throughout the world. This has resulted in increas
 Greater use of energy is a consequence of unrestricted occupation of forest cover by humans. Burning of fossil fuels not only causes pollution but also contributes to emission of greenhouse gases.  
 
 &nbsp;
+\begin{center}
+
+\large{Energy Use}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -387,6 +465,11 @@ Greater use of energy is a consequence of unrestricted occupation of forest cove
 Methane, like CO2, is an active player in the greenhouse effect. Although, not so much in effect as CO2, however, its sources of emission are automobiles which have grown humongously.  
 
 &nbsp;
+\begin{center}
+
+\large{Methane Emissions}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -411,6 +494,11 @@ Methane, like CO2, is an active player in the greenhouse effect. Although, not s
 Nitrous Oxide not only acts as a greenhouse gas but also causes damage to the ozone layer which is our only protection from the harmful rays of the sun. Nitrous Oxide also causes damage to human respiratory systems.  
 
 &nbsp;
+\begin{center}
+
+\large{Nitrous Oxide Emissions}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
@@ -433,6 +521,11 @@ Nitrous Oxide not only acts as a greenhouse gas but also causes damage to the oz
 ### Impact of other Greenhouse Gases
 
 &nbsp;
+\begin{center}
+
+\large{Other Greenhouse Gas Emissions}
+
+\end{center}
 ```{r, echo=FALSE, results='asis', fig.align="center"}
   abs_path = '/home/uditp/Documents/Sem3/DSc/Assignments/Assignment 1/Data/CLimate Change (World)/new.csv'
   df <- read.csv(abs_path, sep = ",", header = TRUE)
