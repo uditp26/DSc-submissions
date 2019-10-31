@@ -1,0 +1,357 @@
+---
+title: "Assignment 3"
+author: "Udit Pant"
+date: 22/10/2019
+output:
+  pdf_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library("fUnitRoots")
+library(lmtest)
+library(FitAR)
+library("forecast")
+library(mlbench)
+library(dplyr)
+library(fitdistrplus)
+library(logspline)
+library(tseries)
+library(questionr)
+```
+
+
+
+# Question 1
+
+Seasonality: It is the phenomenon of a systematic and calendar-related effect showing up in a time series which can often mask the true underlying movements in a time series. Seasonality can be identified by regularly-spaced crests and troughs having a consistent direction.
+
+Trend: A trend is a long-term movement in a time series. It can be identified by observing increase or decrease of a certain quantity over time. 
+
+a) Non-stationary: Trend visible in the graph. <br>
+
+b) Stationary: Except an outlier, the graph shows stationary behaviour as no statistical parameters seem to be changing. <br>
+
+c) Non-stationary: Trends visible. <br>
+
+d) Non-stationary: Seasonality - crests and troughs in the graph indicate periodicity. <br>
+
+e) Non-stationary: Trends visible. <br>
+
+f) Non-stationary: Trends visible <br>
+
+g) Stationary: Statistial parameters constant over time. <br>
+
+h) Non-stationary: Seasonality -  periodicity. <br>
+
+i) Non-stationary: Seasonality and Trends visible in graph. <br>
+
+# Question 2
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+amazon = read.csv('AMZN.csv')
+google = read.csv('GOOG.csv')
+microsoft = read.csv('MSFT.csv')
+
+amazon <- subset(amazon, select=c("date", "volume"))
+google <- subset(google, select=c("date", "volume"))
+microsoft <- subset(microsoft, select=c("date", "volume"))
+
+```
+
+
+Out of the three years data, a major chunk was taken as training data. The remaining was reserved as testing data. 
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+amzn_ts <- ts(amazon[2:length(amazon$volume), 2], start=c(2016,10), end = c(2019,4), frequency=12)
+goog_ts <- ts(google[2:length(google$volume), 2], start=c(2016,10), end = c(2019,4), frequency=12)
+msft_ts <- ts(microsoft[2:length(microsoft$volume), 2], start=c(2016,10), end = c(2019,4), frequency=12)
+
+amzn_ts_test <- ts(amazon[2:length(amazon$volume), 2], start=c(2019,4), end = c(2019,9), frequency=12)
+goog_ts_test <- ts(google[2:length(google$volume), 2], start=c(2019,4), end = c(2019,9), frequency=12)
+msft_ts_test <- ts(microsoft[2:length(microsoft$volume), 2], start=c(2019,4), end = c(2019,9), frequency=12)
+
+par(mfrow=c(3,1))
+plot(amzn_ts)
+plot(goog_ts)
+plot(msft_ts)
+
+```
+Decomposition of the time-series data yields plots about non-stationarity and seasonality present in the data.
+
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+amzn_comps <- decompose(amzn_ts)
+plot(amzn_comps)
+
+```
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+goog_comps <- decompose(goog_ts)
+plot(goog_comps)
+
+```
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+msft_comps <- decompose(msft_ts)
+plot(msft_comps)
+
+```
+
+Box-plots present a neat picture about how the stock volumes are varying across the months.
+
+```{r, echo=FALSE, message=FALSE, results='hide', fig.align="center"}
+
+boxplot(amzn_ts~cycle(amzn_ts))
+
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide', fig.align="center"}
+
+boxplot(goog_ts~cycle(goog_ts))
+
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide', fig.align="center"}
+
+boxplot(msft_ts~cycle(msft_ts))
+
+```
+
+## Inferences
+
+1. We can observe seasonal effects present in the data as during particular months (e.g. October in Microsoft Stock data), the stock volumes tend to drastically change.
+2. The increase adnd decrease in stok volumes indicate a trend.
+3. These two factors contribute to non-stationarity of data.
+4. Comparatively, in order of decreasing health, as per the graphs, Google stands at the top followed by Amazon and then Microsoft. 
+
+
+As we learnt earlier about the seasonality present in data, in order to make it stationary, we must rmove the existing seasonality. 
+
+## Removing Seasonality
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+amzn_snl_adj <- amzn_ts - amzn_comps$seasonal
+goog_snl_adj <- goog_ts - goog_comps$seasonal
+msft_snl_adj <- msft_ts - msft_comps$seasonal
+
+par(mfrow=c(3,1))
+plot(amzn_snl_adj)
+plot(goog_snl_adj)
+plot(msft_snl_adj)
+```
+
+By taking a difference with a lag, we make the data stationary.
+
+## Making Time series stationary
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+amzn_stationary <- diff(amzn_snl_adj, differences=1)
+goog_stationary <- diff(goog_snl_adj, differences=1)
+msft_stationary <- diff(msft_snl_adj, differences=1)
+
+par(mfrow=c(3,1))
+plot(amzn_stationary)
+plot(goog_stationary)
+plot(msft_stationary)
+```
+
+The auto-correlation function (Acf) plot helps determine the Q value which corresponds to moving average. <br>
+
+Similarly, the partial auto-correlation function (Pacf) plot helps identify the P value which correpsonds to auto-correlation. <br>
+
+Since, we're observing two years data, we take max lag to be 24.
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+par(mfrow=c(1,2))
+Acf(amzn_stationary, lag.max = 24, na.action = na.interp) 
+Pacf(amzn_stationary, lag.max = 24, na.action = na.interp)
+
+```
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+par(mfrow=c(1,2))
+Acf(goog_stationary, lag.max = 24, na.action = na.interp) 
+Pacf(goog_stationary, lag.max = 24, na.action = na.interp)
+```
+
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+par(mfrow=c(1,2))
+Acf(msft_stationary, lag.max = 24, na.action = na.interp) 
+Pacf(msft_stationary, lag.max = 24, na.action = na.interp)
+```
+
+The order or (p,q) values were determined from the Acf and Pacf plots. d was taken to be zero. 
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+arm_model_amzn <- arima(amzn_stationary, order = c(1,0,0), method = "ML")
+arm_model_goog <- arima(goog_stationary, order = c(0,0,0), method = "ML")
+arm_model_msft <- arima(msft_stationary, order = c(0,0,0), method = "ML")
+
+par(mfrow=c(3,1))
+arm_model_amzn
+arm_model_goog
+arm_model_msft
+```
+
+Future predictions of stock price: 
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+predict_fut_val_amzn <- predict(arm_model_amzn, n.ahead=5)
+predict_fut_val_goog <- predict(arm_model_goog, n.ahead=5)
+predict_fut_val_msft <- predict(arm_model_msft, n.ahead=5)
+
+par(mfrow=c(3,1))
+predict_fut_val_amzn
+predict_fut_val_goog
+predict_fut_val_msft
+```
+
+Forecast of the stocks:
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+predict_fut_val_amzn <- forecast(arm_model_amzn, h=5, level=c(99.5))
+predict_fut_val_goog <- forecast(arm_model_goog, h=5, level=c(99.5))
+predict_fut_val_msft <- forecast(arm_model_msft, h=5, level=c(99.5))
+
+par(mfrow=c(3,1))
+plot(predict_fut_val_amzn)
+plot(predict_fut_val_goog)
+plot(predict_fut_val_msft)
+```
+
+Plots of the test data:
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+par(mfrow=c(3,1))
+plot(amzn_ts_test)
+plot(goog_ts_test)
+plot(msft_ts_test)
+```
+
+
+
+# Question 3
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+data(BreastCancer)
+
+summary(BreastCancer)
+
+```
+
+## Handling Missing Values
+
+Since only 16 data points of "Bare.nuclei" had NA, those were dropped.
+
+```{r, echo=FALSE, results='hide', fig.align="center"}
+
+cancer_data <- BreastCancer[, 2:11]
+
+cancer_data <- cancer_data %>% na.omit()
+
+for(i in 1:ncol(cancer_data)){
+  cancer_data[, i] <- as.numeric(cancer_data[, i])
+}
+
+cancer_data <- as.data.frame(cancer_data)
+
+```
+
+To understand the distributon our data might belong to, density plots of the features were used. We observe that the values of the features are greater than zero. The plots show a gaussian curve with mean greater than zero for every feature. Also, we must not ignore the fact that data across all features is discrete and not continuous. Therefore, we must use the poisson distribution which allows discrete values along with a log function as our link function which will limit the distribution to account only for positive values.
+
+
+```{r echo=FALSE, fig.align="center", warning=FALSE, results='hide'}
+
+a <- density(cancer_data$Cl.thickness)
+plot(a$x, a$y, col="lightblue", 'l', main="Density Plots of features", xlab="X", ylab="Y", asp=4:1)
+b <- density(cancer_data$Cell.size)
+lines(b$x, b$y, col="red")
+c <- density(cancer_data$Cell.shape)
+lines(c$x, c$y, col="pink")
+d <- density(cancer_data$Marg.adhesion)
+lines(d$x, d$y, col="darkblue")
+e <- density(cancer_data$Epith.c.size)
+lines(e$x, e$y, col="green")
+f <- density(cancer_data$Bare.nuclei)
+lines(f$x, f$y, col="magenta")
+g <- density(cancer_data$Bl.cromatin)
+lines(g$x, g$y, col="cyan")
+h <- density(cancer_data$Normal.nucleoli)
+lines(h$x, h$y, col="maroon")
+i <- density(cancer_data$Mitoses)
+lines(i$x, i$y, col="violet")
+#legend("topright", legend = colnames(cancer_data), col= c("lightblue", "red", "pink", "darkblue", "green", "magenta", "cyan", "maroon", "violet"), lty=1:1, cex=0.8, box.lty = 0)
+
+```
+
+GLM model: Using a poisson distribution with log as the link function.
+
+```{r echo=FALSE, fig.align="center", warning=FALSE, results='hide'}
+
+glm_model <- glm(formula = cancer_data$Class ~ cancer_data$Cl.thickness * cancer_data$Cell.size * cancer_data$Cell.shape * cancer_data$Marg.adhesion * cancer_data$Epith.c.size * cancer_data$Bare.nuclei * cancer_data$Bl.cromatin * cancer_data$Normal.nucleoli * cancer_data$Mitoses, data=cancer_data, family = poisson(link = "log"))
+
+```
+
+
+Summary Statistics: <br>
+
+Estimate values: Values of the unknown parameters <br>
+Standard Error: Standard deviation of the parameters <br>
+Adjusted R squared value: Goodness of fit <br>
+AIC: Akaike Information criterion is an estimator of the quality of the model. <br>
+
+CI and odd ratios listed in the summary below.
+
+Call:
+glm(formula = cancer_data$Class ~ cancer_data$Cl.thickness * 
+    cancer_data$Cell.size * cancer_data$Cell.shape * cancer_data$Marg.adhesion * 
+    cancer_data$Epith.c.size * cancer_data$Bare.nuclei * cancer_data$Bl.cromatin * 
+    cancer_data$Normal.nucleoli * cancer_data$Mitoses, family = poisson(link = "log"), 
+    data = cancer_data)
+
+Deviance Residuals: 
+      Min         1Q     Median         3Q        Max  
+0.000e+00  0.000e+00  0.000e+00  0.000e+00  2.107e-08
+
+Null deviance: 1.0936e+02  on 682  degrees of freedom
+Residual deviance: 5.7287e-14  on 203  degrees of freedom
+AIC: 2472.7
+
+Number of Fisher Scoring iterations: 4
+
+Estimate
+(Intercept)                                                                                                                                                                                                              -1.533e+01
+cancer_data$Cl.thickness                                                                                                                                                                                                  5.670e+00
+cancer_data$Cell.size                                                                                                                                                                                                    -3.714e+01
+cancer_data$Cell.shape                                                                                                                                                                                                   -2.618e+01
+cancer_data$Marg.adhesion                                                                                                                                                                                                 3.985e+01
+cancer_data$Epith.c.size                                                                                                                                                                                                  2.208e+01
+cancer_data$Bare.nuclei                                                                                                                                                                                                   2.799e-01
+cancer_data$Bl.cromatin                                                                                                                                                                                                  -1.622e+01
+cancer_data$Normal.nucleoli                                                                                                                                                                                               5.731e+00
+cancer_data$Mitoses                                                                                                                                                                                                       1.468e+01
+
+
+```{r echo=FALSE, fig.align="center", warning=FALSE, results='hide'}
+
+summary(glm_model)
+
+```
+
+## References
+
+1. [Amazon Stock Data](https://www.macrotrends.net/stocks/charts/AMZN/amazon/stock-price-history)
+2. [Google Stock Data](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/stock-price-history)
+3. [Microsoft Stock Data](https://www.macrotrends.net/stocks/charts/MSFT/microsoft/stock-price-history)
+4. [Time Series Data Analysis](https://datascienceplus.com/time-series-analysis-using-arima-model-in-r/)
+
+
+
